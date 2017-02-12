@@ -30,7 +30,7 @@
  */
 function auth($username, $password) {
 	// Sending the request to the database
-	$req = Core\Queries::execute("SELECT * FROM openauth_users WHERE username = :username", ['username' => $username]);
+	$req = Core\Queries::execute("SELECT * FROM cshop_users WHERE user_login = :username", ['username' => $username]);
 
 	// If the request found a user
 	if(isset($req) && !empty($req)) {
@@ -38,7 +38,7 @@ function auth($username, $password) {
 		$password = hash('sha256', $password);
 
 		// If it is the same as the one of the database
-		if($password == $req->password)
+		if($password == $req->user_password)
 			// Returning true
 			return true;
 
@@ -72,10 +72,10 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 	$accessToken = md5(uniqid(rand(), true));
 
 	// Sending a request to the database to get the user
-	$req = Core\Queries::execute("SELECT * FROM openauth_users WHERE username = :username", ['username' => $username]);
+	$req = Core\Queries::execute("SELECT * FROM cshop_users WHERE user_login = :username", ['username' => $username]);
 
 	// Getting the user UUID
-	$playerUUID = $req->UUID;
+	//$playerUUID = $req->UUID;
 
 	// If the given client token is empty
 	if(empty($clientToken)) {
@@ -84,7 +84,7 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 
 		// Sending a request to the database to save the access token and the client token
 		Core\Queries::execute(
-	  		'UPDATE openauth_users SET accessToken=:accessToken, clientToken=:clientToken WHERE username=:username',
+	  		'UPDATE cshop_users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username',
 			[
 				'accessToken' => $accessToken,
 				'clientToken' => $newClientToken,
@@ -98,12 +98,12 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 			'clientToken' => $newClientToken,
 			'availableProfiles' => [
 				[
-					'id' => $playerUUID,
+					//'id' => $playerUUID,
 					'name' => $username
 				]
 			],
 			'selectedProfile' => [
-				'id' => $playerUUID,
+				//'id' => $playerUUID,
 				'name' => $username
 			]
 		];
@@ -119,7 +119,7 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 	else {
 		// Sending a request to the database to save the access token
 		Core\Queries::execute(
-			'UPDATE openauth_users SET accessToken=:accessToken WHERE username=:username',
+			'UPDATE cshop_users SET accessToken=:accessToken WHERE user_login=:username',
 			[
 				'accessToken' => $accessToken,
 				'username' 	  => $username,
@@ -132,12 +132,12 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 			'clientToken' => $newClientToken,
 			'availableProfiles' => [
 				[
-					'id' => $playerUUID,
+					//'id' => $playerUUID,
 					'name' => $username
 				]
 			],
 			'selectedProfile' => [
-				'id' => $playerUUID,
+				//'id' => $playerUUID,
 				'name' => $username
 			]
 		];
@@ -169,7 +169,7 @@ function send_response($username, $clientToken){
 
 		// Sending a request to the database to save the new access and client tokens
 		Core\Queries::execute(
-			"UPDATE members SET accessToken=:accessToken, clientToken=:clientToken WHERE username=:username",
+			"UPDATE cshop_users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username",
 			[
 				'accessToken' => $accessToken,
 				'clientToken' => $newClientToken,
@@ -194,7 +194,7 @@ function send_response($username, $clientToken){
 	else {
 		// Sending a request to the database to update the access token
 		Core\Queries::execute(
-			"UPDATE members SET accessToken=:accessToken WHERE username=:username",
+			"UPDATE cshop_users SET accessToken=:accessToken WHERE user_login=:username",
 			[
 				'accessToken' => $accessToken,
 				'username'	  => $username
