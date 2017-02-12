@@ -37,7 +37,7 @@ if($request['method'] == "POST")
 		// If they aren't null
 		if(!is_null($username) & !is_null($password)) {
 			// Sending a request to the database to get the user from his username and his password
-			$req = Core\Queries::execute('SELECT * FROM openauth_users WHERE username=:username', ['username' => $username]);
+			$req = Core\Queries::execute('SELECT * FROM cshop_users WHERE user_login=:username', ['username' => $username]);
 
 			// If the user was found (the request response isn't empty)
 			if(!empty($req)) {
@@ -47,7 +47,7 @@ if($request['method'] == "POST")
 				// If the password is the same as the one of the database
 				if($password == $req->password)
 					// Sending a request to the database to delete the user's access token
-					Core\Queries::execute('UPDATE openauth_users SET accessToken=:accessToken WHERE username=:username', ['username' => $username, 'accessToken' => null]);
+					Core\Queries::execute('UPDATE cshop_users SET accessToken=:accessToken WHERE user_login=:username', ['username' => $username, 'accessToken' => null]);
 
 				// Else if the password aren't the same
 				else
