@@ -39,10 +39,10 @@ if(isset($_POST))
 		// So if it didn't fail
 		if(!$failed){
 			// Checking if the database exists
-			$exist = $pdo->prepare("SHOW TABLES LIKE 'openauth_users'");
+			$exist = $pdo->prepare("SHOW TABLES LIKE 'cshop_users'");
 
-			// If not
-		    if($exist->rowCount()==0) {
+			// If yes
+		    if($exist->rowCount()==1) {
 		    	// Preparing it
 				$req = $pdo->prepare('
 					SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -53,16 +53,11 @@ if(isset($_POST))
 					/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 					/*!40101 SET NAMES utf8 */;
 
-					CREATE TABLE IF NOT EXISTS `openauth_users` (
-					  `id` int(11) NOT NULL AUTO_INCREMENT,
-					  `username` varchar(255) NOT NULL,
-					  `password` varchar(255) NOT NULL,
-					  `GUID` varchar(255) NOT NULL,
-					  `UUID` varchar(255) NOT NULL,
+					INSERT INTO `cshop_users` (
+					  `user_login` varchar(255) NOT NULL,
+					  `user_password` varchar(255) NOT NULL,
 					  `accessToken` varchar(255) NOT NULL,
 					  `clientToken` varchar(255) NOT NULL,
-					  PRIMARY KEY (`id`),
-					  UNIQUE KEY `UUID` (`GUID`)
 					) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 					/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
