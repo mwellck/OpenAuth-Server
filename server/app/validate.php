@@ -34,7 +34,7 @@ if($request['method'] == "POST")
 		// If the given access token isn't null
 		if(!is_null($accessToken)){
 			// Sending a request to the database to get the user from the given access token
-			$req = Core\Queries::execute('SELECT * FROM openauth_users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
+			$req = Core\Queries::execute('SELECT * FROM cshop_users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
 
 			// If the request response is empty
 			if(empty($req))
