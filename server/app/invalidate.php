@@ -37,14 +37,14 @@ if($request['method'] == "POST")
         // If they aren't null
 		if(!is_null($accessToken) && !is_null($clientToken)) {
 			// Sending a request to the database to get the user from the client token
-			$req = Core\Queries::execute('SELECT * FROM openauth_users WHERE clientToken=:clientToken', ['clientToken' => $clientToken]);
+			$req = Core\Queries::execute('SELECT * FROM cshop_users WHERE clientToken=:clientToken', ['clientToken' => $clientToken]);
 
             // If the client token exists in the database (so the response isn't empty)
 			if(!empty($req))
                 // If the given access token and the database access token are the same
 				if($accessToken == $req->accessToken)
 					// Updating the access and the client token in the database
-					Core\Queries::execute("UPDATE openauth_users SET accessToken=:accessToken WHERE clientToken=:clientToken", ['clientToken' => $clientToken, 'accessToken' => '']);
+					Core\Queries::execute("UPDATE cshop_users SET accessToken=:accessToken WHERE clientToken=:clientToken", ['clientToken' => $clientToken, 'accessToken' => '']);
 				
 				// Else if they aren't the same
 				else
