@@ -35,7 +35,7 @@ if($request['method'] == "POST")
 		$accessToken = !empty($getContents['accessToken']) ? $getContents['accessToken'] : null;
 
 		// Sending a request to the database to get the user from the access token
-		$req = Core\Queries::execute('SELECT * FROM openauth_users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
+		$req = Core\Queries::execute('SELECT * FROM cshop_users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
 
 		// If the user was found (the request response isn't empty)
 		if(!empty($req))
@@ -45,7 +45,7 @@ if($request['method'] == "POST")
 				$newAccessToken = md5(uniqid(rand(), true));
 
 				// Sending a request to the database to update the access token of the user
-				Core\Queries::execute('UPDATE openauth_users SET accessToken=:accessToken WHERE clientToken=:clientToken', ['accessToken' => $newAccessToken, 'clientToken' => $clientToken]);
+				Core\Queries::execute('UPDATE cshop_users SET accessToken=:accessToken WHERE clientToken=:clientToken', ['accessToken' => $newAccessToken, 'clientToken' => $clientToken]);
 				
 				// Creating an array of the new infos
 				$jsonArray = array(
