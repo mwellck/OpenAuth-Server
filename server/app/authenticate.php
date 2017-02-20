@@ -31,7 +31,7 @@
 function auth($username, $password) {
 	// Sending the request to the database
 	$config = Core\Config::get('database');
-	$req = Core\Queries::execute("SELECT * FROM cshop_users WHERE user_login = :username", ['username' => $username]);
+	$req = Core\Queries::execute("SELECT * FROM ".$config['dbprefix']."users WHERE user_login = :username", ['username' => $username]);
 
 	// If the request found a user
 	if(isset($req) && !empty($req)) {
