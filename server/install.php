@@ -21,7 +21,7 @@
 // If the form was sent
 if(isset($_POST))
 	// If all the fields (except the password) are filled
-	if(!empty($_POST['host']) && !empty($_POST['username']) && !empty($_POST['dbname']) && !empty($_POST['ownername'])) {
+	if(!empty($_POST['host']) && !empty($_POST['username']) && !empty($_POST['dbname']) && !empty($_POST['ownername']) && !empty($_POST['dbprefix'])) {
 		// Trying to connect to the database
 		try{
 			$pdo = new PDO('mysql:dbname='. $_POST['dbname'] .';host='. $_POST['host'] .'', $_POST['username'], $_POST['password']);
@@ -43,30 +43,13 @@ if(isset($_POST))
 
 			// If yes
 		    if($exist->rowCount()==1) {
-		    	// Preparing it
-				$req = $pdo->prepare('
-					SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-					SET time_zone = "+00:00";
-
-					/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-					/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-					/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-					/*!40101 SET NAMES utf8 */;
-
-					INSERT INTO `cshop_users` (
-					  `user_login` varchar(255) NOT NULL,
-					  `user_password` varchar(255) NOT NULL,
-					  `accessToken` varchar(255) NOT NULL,
-					  `clientToken` varchar(255) NOT NULL,
-					) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
-					/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-					/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-					/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-				');
-
-				// And creating it
-				$req->execute();
+			$req = $pdo->prepare('
+				ALTER TABLE '.$_POST['dbprefix'].' ADD COLUMN accessToken VARCHAR(255);
+				ALTER TABLE '.$_POST['dbprefix'].' ADD COLUMN clientToken VARCHAR(255);
+			');
+			$req->execute();    
+		    }else{
+			$notif = ['type' => 'danger', 'msg' => 'Vous n\'avez pas une installation de CraftaShop valide !'];
 		    }
 
 		    // Getting the base config file
@@ -93,6 +76,8 @@ if(isset($_POST))
 				// Writing the password
 				elseif(strpos($v, "'password' =>"))
 					$config_file[$k] = "\t\t'password' => '{$_POST['password']}',\n";
+			        elseif(strpos($v, "'dbprefix' =>"))
+					$config_file[$k] = "\t\t'dbprefix' => '{$_POST['dbprefix']}',\n";
 
 			// Writing all int he config.php file
 			file_put_contents('config.php', $config_file);
@@ -153,6 +138,8 @@ if(isset($_POST))
                     <label for="password">Mot de Passe</label> : <input class="text-field" type="password" name="password" id="password"/>
                     <br />
                     <label for="redirecturl">Base de données</label> : <input class="text-field" type="text" name="dbname" id="dbname" placeholder="Exemple: openauth"  required/>
+                    <br />
+		    <label for="craftashopprefix">Préfix de vos tables (par défaut cshop_)</label> : <input class="text-field" type="text" name="dbprefix" id="dbprefix" placeholder="Exemple: cshop_"  required/>
                     <br />
                     <br />
                     

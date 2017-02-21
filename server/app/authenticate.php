@@ -30,7 +30,8 @@
  */
 function auth($username, $password) {
 	// Sending the request to the database
-	$req = Core\Queries::execute("SELECT * FROM cshop_users WHERE user_login = :username", ['username' => $username]);
+	$config = Core\Config::get('database');
+	$req = Core\Queries::execute("SELECT * FROM ".$config['dbprefix']."users WHERE user_login = :username", ['username' => $username]);
 
 	// If the request found a user
 	if(isset($req) && !empty($req)) {
@@ -68,11 +69,12 @@ function auth($username, $password) {
  *            The version of the agent
  */
 function send_response_agent($username, $clientToken, $agentName, $agentVersion) {
+	$config = Core\Config::get('database');
 	// Generating a random access token
 	$accessToken = md5(uniqid(rand(), true));
 
 	// Sending a request to the database to get the user
-	$req = Core\Queries::execute("SELECT * FROM cshop_users WHERE user_login = :username", ['username' => $username]);
+	$req = Core\Queries::execute("SELECT * FROM ".$config['dbprefix']."users WHERE user_login = :username", ['username' => $username]);
 
 	// Getting the user UUID
 	//$playerUUID = $req->UUID;
@@ -84,7 +86,7 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 
 		// Sending a request to the database to save the access token and the client token
 		Core\Queries::execute(
-	  		'UPDATE cshop_users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username',
+	  		'UPDATE ".$config['dbprefix']."users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username',
 			[
 				'accessToken' => $accessToken,
 				'clientToken' => $newClientToken,
@@ -119,7 +121,7 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
 	else {
 		// Sending a request to the database to save the access token
 		Core\Queries::execute(
-			'UPDATE cshop_users SET accessToken=:accessToken WHERE user_login=:username',
+			'UPDATE ".$config['dbprefix']."users SET accessToken=:accessToken WHERE user_login=:username',
 			[
 				'accessToken' => $accessToken,
 				'username' 	  => $username,
@@ -159,6 +161,7 @@ function send_response_agent($username, $clientToken, $agentName, $agentVersion)
  *            The client token
  */
 function send_response($username, $clientToken){
+	$config = Core\Config::get('database');
 	// Generating a random access token
 	$accessToken = md5(uniqid(rand(), true));
 
@@ -169,7 +172,7 @@ function send_response($username, $clientToken){
 
 		// Sending a request to the database to save the new access and client tokens
 		Core\Queries::execute(
-			"UPDATE cshop_users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username",
+			"UPDATE ".$config['dbprefix']."users SET accessToken=:accessToken, clientToken=:clientToken WHERE user_login=:username",
 			[
 				'accessToken' => $accessToken,
 				'clientToken' => $newClientToken,
@@ -194,7 +197,7 @@ function send_response($username, $clientToken){
 	else {
 		// Sending a request to the database to update the access token
 		Core\Queries::execute(
-			"UPDATE cshop_users SET accessToken=:accessToken WHERE user_login=:username",
+			"UPDATE ".$config['dbprefix']."users SET accessToken=:accessToken WHERE user_login=:username",
 			[
 				'accessToken' => $accessToken,
 				'username'	  => $username

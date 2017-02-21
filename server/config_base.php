@@ -31,7 +31,8 @@ return [
 		'database' => '',
 		'host' => '',
 		'username' => '',
-		'password' => ''
+		'password' => '',
+		'dbprefix' => ''
 	],
 	
 	// If the register page is enabled

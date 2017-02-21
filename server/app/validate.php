@@ -24,7 +24,7 @@ if($request['method'] == "POST")
 	if($request['content-type'] == "application/json") {
 		// Getting the input JSON
 		$input = file_get_contents("php://input");
-
+		$config = Core\Config::get('database');
 		// Decoding it
 		$getContents = json_decode($input, true);
 
@@ -34,7 +34,7 @@ if($request['method'] == "POST")
 		// If the given access token isn't null
 		if(!is_null($accessToken)){
 			// Sending a request to the database to get the user from the given access token
-			$req = Core\Queries::execute('SELECT * FROM cshop_users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
+			$req = Core\Queries::execute('SELECT * FROM ".$config['dbprefix']."users WHERE accessToken=:accessToken', ['accessToken' => $accessToken]);
 
 			// If the request response is empty
 			if(empty($req))
